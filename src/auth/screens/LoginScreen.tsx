@@ -6,6 +6,7 @@ import {
 } from "phosphor-react-native";
 import { useState } from "react";
 import { useAppTranslation } from "../../i18n";
+import { useAuthStore } from "../client";
 
 import {
   AuthContent,
@@ -26,11 +27,31 @@ const SubmitButton = styled(Button)({
   marginTop: 19,
 });
 
+const ErrorCopy = styled.Text({
+  color: "#C62828",
+  fontFamily: "Poppins-Regular",
+  fontSize: 13,
+  marginTop: 12,
+  textAlign: "center",
+});
+
 export function LoginScreen() {
   const router = useRouter();
+  const login = useAuthStore((state) => state.login);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authenticationError, setAuthenticationError] = useState(false);
   const { t } = useAppTranslation("login");
+
+  const handleSubmit = async () => {
+    setAuthenticationError(false);
+    try {
+      await login({ username: email, password });
+      router.replace("/(closed)/onboarding/1");
+    } catch {
+      setAuthenticationError(true);
+    }
+  };
 
   return (
     <AuthScreen>
@@ -84,12 +105,13 @@ export function LoginScreen() {
 
           <SubmitButton
             accessibilityLabel={t("signIn")}
-            onPress={() => {
-              router.replace("/(closed)/onboarding/1");
-            }}
+            onPress={() => void handleSubmit()}
           >
             {t("signIn")}
           </SubmitButton>
+          {authenticationError ? (
+            <ErrorCopy>{t("authenticationFailed")}</ErrorCopy>
+          ) : null}
 
           <FooterCopy>
             {t("newUser")} <FooterLink>{t("footerSignIn")}</FooterLink>

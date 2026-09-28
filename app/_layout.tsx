@@ -3,11 +3,13 @@ import * as SplashScreen from "expo-splash-screen";
 import { Stack } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 
+import { useAuthStore } from "../src/auth/client";
 import { LocalizationProvider } from "../src/i18n";
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const authReady = useAuthStore((state) => !state.isBootstrapping);
   const [localizationReady, setLocalizationReady] = useState(false);
   const handleLocalizationReady = useCallback(
     () => setLocalizationReady(true),
@@ -21,10 +23,14 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if ((loaded || error) && localizationReady) {
+    void useAuthStore.getState().bootstrap();
+  }, []);
+
+  useEffect(() => {
+    if ((loaded || error) && localizationReady && authReady) {
       void SplashScreen.hideAsync();
     }
-  }, [error, loaded, localizationReady]);
+  }, [authReady, error, loaded, localizationReady]);
 
   if (!loaded && !error) {
     return null;
@@ -32,11 +38,7 @@ export default function RootLayout() {
 
   return (
     <LocalizationProvider onReady={handleLocalizationReady}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
+      {authReady ? <Stack screenOptions={{ headerShown: false }} /> : null}
     </LocalizationProvider>
   );
 }
