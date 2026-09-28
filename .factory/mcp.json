@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "disabled": false
+    },
+    "maestro": {
+      "type": "stdio",
+      "command": "maestro",
+      "args": ["mcp"],
+      "disabled": false
+    },
+    "sonarqube": {
+      "type": "http",
+      "url": "http://localhost:8765/mcp",
+      "headers": {
+        "Authorization": "Bearer sqp_0766ffd200a9dfd36436a1d2afbe01d3005e8765"
+      },
+      "oauth": false,
+      "disabled": true
+    }
+  }
+}
