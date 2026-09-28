@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor Developer
+    participant AI as AI IDE
+    participant Codebase
+
+    Developer->>AI: /openspec-explore <feature idea>
+    AI->>Codebase: Inspect the existing project
+    Codebase-->>AI: Return code and project context
+    AI-->>Developer: Ask questions and clarify the idea
+
+    Developer->>AI: /openspec-propose <feature idea>
+    AI->>Codebase: Create the change artifacts
+    Codebase-->>AI: Save proposal, specs, design, and tasks
+    AI-->>Developer: Present the reviewable change plan
+
+    Developer->>AI: /openspec-apply-change <change-id>
+    AI->>Codebase: Read the change artifacts and tasks
+    loop For each task
+        AI->>Codebase: Implement the task and update the code
+        Codebase-->>AI: Save the code changes
+        AI-->>Developer: Report implementation progress
+    end
+    AI-->>Developer: Confirm implementation is complete
+
+    Developer->>AI: /openspec-archive-change <change-id>
+    AI->>Codebase: Update the main specifications
+    AI->>Codebase: Move the change folder to the archive
+    Codebase-->>AI: Save updated specs and archived change
+    AI-->>Developer: Confirm the change is archived

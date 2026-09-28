@@ -1,0 +1,53 @@
+appId: com.anonymous.cbsdemo
+---
+- launchApp
+
+# Wait for the splash screen and welcome screen to finish loading.
+- extendedWaitUntil:
+    visible: "Everything you need to manage your money"
+    timeout: 10000
+
+# Open the sign-in screen.
+- tapOn:
+    text: "Sign in"
+- extendedWaitUntil:
+    visible: "Email Address"
+    timeout: 5000
+
+# Enter the test credentials.
+- tapOn:
+    text: "Email Address"
+- inputText: "john.doe@example.loc"
+- tapOn:
+    text: "Password"
+- inputText: "Password@123"
+
+# Submit the form. The page heading and submit button share the same text.
+- tapOn:
+    text: "Sign In"
+    index: 1
+
+# Complete the three onboarding screens.
+- extendedWaitUntil:
+    visible: "Fastest Payment in the world"
+    timeout: 5000
+- tapOn:
+    text: "Next"
+
+- extendedWaitUntil:
+    visible: "The most Secure Platfrom for Customer"
+    timeout: 5000
+- tapOn:
+    text: "Next"
+
+- extendedWaitUntil:
+    visible: "Paying for Everything is Easy and Convenient"
+    timeout: 5000
+- tapOn:
+    text: "Next"
+
+# Confirm that onboarding ends on Home.
+- extendedWaitUntil:
+    visible: "Welcome back,"
+    timeout: 5000
+- assertVisible: "Transaction"
