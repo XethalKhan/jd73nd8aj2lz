@@ -10,7 +10,7 @@ export function Onboarding3Screen() {
     <OnboardingScreen
       activeIndex={2}
       illustration={illustration}
-      onNext={() => router.replace("/(closed)/home")}
+      onNext={() => router.replace("/(closed)/(tabs)/home")}
       translationNamespace="onboarding-3"
     />
   );

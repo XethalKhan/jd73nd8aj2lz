@@ -3,8 +3,14 @@ import { useRouter } from "expo-router";
 
 import { LoginScreen } from "./LoginScreen";
 
+const login = jest.fn();
+
 jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
+}));
+
+jest.mock("../client", () => ({
+  useAuthStore: jest.fn(),
 }));
 
 jest.mock("expo-image", () => ({
@@ -18,6 +24,12 @@ describe("LoginScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({ back, replace });
+    const { useAuthStore } = jest.requireMock("../client") as {
+      useAuthStore: jest.Mock;
+    };
+    useAuthStore.mockImplementation((selector: (state: unknown) => unknown) =>
+      selector({ login }),
+    );
   });
 
   it("renders the required copy and accessible controls", async () => {
@@ -35,17 +47,30 @@ describe("LoginScreen", () => {
     expect(getByLabelText("Password")).toBeTruthy();
   });
 
-  it("accepts text and replaces the route on empty or arbitrary submission", async () => {
+  it("submits credentials and navigates only after successful authentication", async () => {
+    login.mockResolvedValueOnce({});
     const { getByLabelText, getByRole } = await render(<LoginScreen />);
     const submit = getByRole("button", { name: "Sign In" });
 
-    await fireEvent.press(submit);
     await fireEvent.changeText(getByLabelText("Email Address"), "any-value");
     await fireEvent.changeText(getByLabelText("Password"), "not-a-password");
     await fireEvent.press(submit);
 
-    expect(replace).toHaveBeenCalledTimes(2);
-    expect(replace).toHaveBeenLastCalledWith("/(closed)/onboarding/1");
+    expect(login).toHaveBeenCalledWith({
+      username: "any-value",
+      password: "not-a-password",
+    });
+    expect(replace).toHaveBeenCalledWith("/(closed)/onboarding/1");
+  });
+
+  it("shows an authentication failure and remains in the open flow", async () => {
+    login.mockRejectedValueOnce(new Error("invalid credentials"));
+    const { getByRole, getByText } = await render(<LoginScreen />);
+
+    await fireEvent.press(getByRole("button", { name: "Sign In" }));
+
+    expect(getByText("Authentication failed")).toBeTruthy();
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it("returns to the previous open destination", async () => {

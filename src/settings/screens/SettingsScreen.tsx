@@ -15,6 +15,7 @@ import {
 } from "../../i18n";
 import { IconButton } from "../../components/IconButton";
 import { ScreenHeader } from "../../components/ScreenHeader";
+import { useAuthStore } from "../../auth/client";
 
 const colors = {
   action: "#0066FF",
@@ -134,6 +135,7 @@ const SecurityDescription = styled.Text({
 
 export function SettingsScreen() {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
   const { t } = useAppTranslation("settings");
   const { locale } = useLocalization();
   const [biometricEnabled, setBiometricEnabled] = useState(false);
@@ -157,7 +159,15 @@ export function SettingsScreen() {
             accessibilityLabel={t("logOut")}
             backgroundColor="#F4F4F4"
             icon={<SignOutIcon color={colors.heading} size={20} weight="regular" />}
-            onPress={() => undefined}
+            onPress={() => {
+              void (async () => {
+                try {
+                  await logout();
+                } finally {
+                  router.replace("/(open)/welcome");
+                }
+              })();
+            }}
           />
         }
         title={t("title")}

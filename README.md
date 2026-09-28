@@ -32,6 +32,24 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ### SonarQube
 
+### Expo auth server
+
+The Expo server exposes the demo authentication API and can be started with:
+
+```bash
+docker compose up --build expo-server
+```
+
+Set `EXPO_PUBLIC_API_URL` to an absolute URL reachable by the client:
+
+- Web: `http://localhost:8081`
+- Android emulator: `http://10.0.2.2:8081`
+- Physical device: `http://<your-computer-lan-ip>:8081`
+
+Set `AUTH_JWT_SECRET` to a non-default secret outside local development. The
+demo credentials default to `demo@example.com` and `demo-password`; override
+them with `AUTH_DEMO_USERNAME` and `AUTH_DEMO_PASSWORD` when needed.
+
 Start the local SonarQube server and its PostgreSQL database:
 
 ```bash

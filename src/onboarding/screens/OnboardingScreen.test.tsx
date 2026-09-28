@@ -70,6 +70,6 @@ describe("onboarding screens", () => {
 
     await fireEvent.press(getByRole("button", { name: "Next" }));
 
-    expect(replace).toHaveBeenCalledWith("/(closed)/home");
+    expect(replace).toHaveBeenCalledWith("/(closed)/(tabs)/home");
   });
 });

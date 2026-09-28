@@ -1,4 +1,18 @@
 services:
+  expo-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cbsdemo-expo-server
+    environment:
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-local-development-secret}
+      EXPO_HOST: ${EXPO_HOST:-lan}
+      EXPO_PUBLIC_API_URL: ${EXPO_PUBLIC_API_URL:-http://localhost:${EXPO_PORT:-8081}}
+      EXPO_PORT: 8081
+    ports:
+      - "${EXPO_PORT:-8081}:8081"
+    restart: unless-stopped
+
   sonarqube-db:
     image: postgres:17-alpine
     container_name: cbsdemo-sonarqube-db
